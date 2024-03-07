@@ -3,8 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require("mongoose");
-const productRouter = require("./routes/products");
-// const userRouter = require("./routes/users");
+const productRoutes = require("./routes/products");
+const userRoutes = require("./routes/users");
 
 const app = express();
 
@@ -15,12 +15,12 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
     credentials: true 
 }));
 
-app.use("/product", productRouter);
-// app.use("/user", userRoutes);
+app.use("/product", productRoutes);
+app.use("/user", userRoutes);
 
 mongoose 
   .connect(process.env.MONGO_URI, {

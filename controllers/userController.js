@@ -1,6 +1,6 @@
 const User = require("../models/userModel");
 const Product = require("../models/productModel");
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "3d" });
@@ -8,11 +8,11 @@ const createToken = (_id) => {
 
 // login user
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
     // extract properties from db
-    const { role, username, productCart, productFavorites, _id } = await User.login(email, password);
+    const { email, role, productCart, productFavorites, _id } = await User.login(username, password);
     const token = createToken(_id);
 
     res.status(200).json({ email, token, role, productCart, productFavorites, username });
