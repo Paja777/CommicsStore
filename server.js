@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require("mongoose");
+const productRouter = require("./routes/products")
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.use(cors({
     credentials: true 
 }));
 
+app.use("/product", productRouter);
+// app.use("/user", userRoutes);
+
 mongoose 
   .connect(process.env.MONGO_URI, {
     dbName: 'CommicsStore',
@@ -26,7 +30,7 @@ mongoose
   .then(() => {
     //listen for requests
     app.listen(process.env.PORT, () => {
-      console.log("Connected to db, and listening on port 5100");
+      console.log("Connected to db, and listening on port 6000");
     });
   })
   .catch((err) => {
