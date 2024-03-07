@@ -15,21 +15,21 @@ const router = express.Router();
 router.get("/", getProducts);
 
 // // get single product
-// router.get("/:id", getProduct);
+router.get("/:id", getProduct);
 
 // // get cart products
-// router.get("/cart/products", getCartProducts);
+router.get("/cart/products", getCartProducts);
 
-// // get favourite products
-// router.get("/favorite/products", getFavoriteProducts);
+// get favourite products
+router.get("/favorite/products", getFavoriteProducts);
 
-// // post product
-// router.post("/", createProduct);
+// post product
+router.post("/", createProduct);
 
-// // update product
-// router.patch("/:id", updateProduct);
+// update product
+router.patch("/:id", updateProduct);
 
-// // delete product
-// router.delete("/:id", deleteProduct);
+// delete product
+router.delete("/:id", deleteProduct);
 
 module.exports = router;

@@ -13,12 +13,12 @@ const productSchema = new Schema({
         required: true
     }, 
     image: {
-        type: [String],
+        type: String,
         required: false
     },
     rating: {
         type: Number,
-        required: false
+        required: true
     },
     description: {
         type: String,

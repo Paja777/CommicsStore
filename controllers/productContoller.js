@@ -39,9 +39,22 @@ const getFavoriteProducts = async (req, res) => {
 
 // create product
 const createProduct = async (req, res) => {
-  const products = await Product.find({}).sort({ cratedAt: -1 });
-
-  res.status(200).json(products);
+  const { title, image, category, price, inStock, description, rating } =
+    req.body;
+  try {
+    const product = await Product.create({
+      title,
+      image,
+      category,
+      price,
+      inStock,
+      description,
+      rating,
+    });
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 // update product
@@ -90,5 +103,5 @@ module.exports = {
   getCartProducts,
   getFavoriteProducts,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };
