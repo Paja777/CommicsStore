@@ -16,8 +16,8 @@ router.post('/signup', signupUser)
 //<-----Middleware for protecting routes---->//
 // router.use(requireAuth)
 
-// rate route
-router.patch('/rate', ratingUser)
+// // rate route
+// router.patch('/rate', ratingUser)
 
 
 
