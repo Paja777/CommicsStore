@@ -21,6 +21,7 @@ app.use(cors({
 
 app.use("/product", productRoutes);
 app.use("/user", userRoutes);
+// app.use("/data", dataRoutes);
 
 mongoose 
   .connect(process.env.MONGO_URI, {
@@ -31,7 +32,7 @@ mongoose
   .then(() => {
     //listen for requests
     app.listen(process.env.PORT, () => {
-      console.log("Connected to db, and listening on port 6000");
+      console.log("Connected to db, and listening on port 3100");
     });
   })
   .catch((err) => {

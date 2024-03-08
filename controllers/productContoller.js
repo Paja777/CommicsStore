@@ -43,7 +43,7 @@ const createProduct = async (req, res) => {
     req.body;
   try {
     const product = await Product.create({
-      title,
+      title, 
       image,
       category,
       price,
