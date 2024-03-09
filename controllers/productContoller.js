@@ -1,4 +1,5 @@
 const Product = require("../models/productModel");
+const Data = require("../models/dataModel");
 const mongoose = require("mongoose");
 
 // get all products
@@ -41,10 +42,10 @@ const getFavoriteProducts = async (req, res) => {
 const createProduct = async (req, res) => {
   const { title, image, category, price, stock, description, rating } =
     req.body;
-    
+
   try {
     const product = await Product.create({
-      title, 
+      title,
       image,
       category,
       price,
@@ -52,7 +53,19 @@ const createProduct = async (req, res) => {
       description,
       rating,
     });
-    res.status(200).json(product);
+
+    // create product data for data tracking (admin)
+    const dataResponse = await Data.create({
+      productId: product._id,
+      title,
+      price,
+      soldMon: 0,
+      soldYr: 0,
+      M$: 0,
+      Y$: 0,
+    });
+
+    res.status(200).json( dataResponse);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
