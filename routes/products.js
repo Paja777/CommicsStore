@@ -1,4 +1,5 @@
 const express = require("express");
+const requireAuth = require('../middleware/requireAuth')
 const {
   getProducts,
   createProduct,
@@ -8,6 +9,7 @@ const {
   updateProduct,
   deleteProduct
 } = require("../controllers/productContoller");
+
 
 const router = express.Router();
 
@@ -22,6 +24,9 @@ router.get("/cart/products", getCartProducts);
 
 // get favourite products
 router.get("/favorite/products", getFavoriteProducts);
+
+//<--------------Middleware for protecting routes--------------->//
+router.use(requireAuth)
 
 // post product
 router.post("/", createProduct);

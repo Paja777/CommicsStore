@@ -13,11 +13,9 @@ router.post('/login', loginUser)
 // signup route
 router.post('/signup', signupUser) 
 
-//<-----Middleware for protecting routes---->//
-// router.use(requireAuth)
 
-// // rate route
-// router.patch('/rate', ratingUser)
+
+
 
 
 

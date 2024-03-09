@@ -8,7 +8,7 @@ const getProducts = async (req, res) => {
   res.status(200).json(products);
 };
 
-// create single product
+// get single product
 const getProduct = async (req, res) => {
   const { id } = req.params;
 
@@ -39,15 +39,16 @@ const getFavoriteProducts = async (req, res) => {
 
 // create product
 const createProduct = async (req, res) => {
-  const { title, image, category, price, inStock, description, rating } =
+  const { title, image, category, price, stock, description, rating } =
     req.body;
+    
   try {
     const product = await Product.create({
       title, 
       image,
       category,
       price,
-      inStock,
+      stock,
       description,
       rating,
     });
