@@ -53,6 +53,10 @@ const createProduct = async (req, res) => {
       description,
       rating,
       stock,
+      soldMon: 0,
+      soldYr: 0,
+      M$: 0,
+      Y$: 0,
     });
 
     // create product data for data tracking (admin)
