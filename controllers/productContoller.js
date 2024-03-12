@@ -91,6 +91,12 @@ const updateProduct = async (req, res) => {
       ...req.body,
     }
   );
+  await Data.findOneAndUpdate(
+    { productId: id },
+    {
+      ...req.body,
+    }
+  );
 
   if (!product) {
     return res.status(400).json({ error: "No such product" });
