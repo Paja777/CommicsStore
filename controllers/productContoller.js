@@ -108,6 +108,7 @@ const deleteProduct = async (req, res) => {
   }
 
   const product = await Product.findOneAndDelete({ _id: id });
+  const productData = await Data.findOneAndDelete({ productId: id });
 
   if (!product) {
     return res.status(400).json({ error: "No such product" });
