@@ -49,27 +49,61 @@ const signupUser = async (req, res) => {
   }
 };
 
-// update user
-const updateUser = async (req, res) => {
-  const { mode } = req.params;
-  console.log(mode);
+// add product to user's cart or favorites
+const addToCart = async (req, res) => {
   const id = req.user._id;
-  console.log(req.body);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "No such user" });
+  }
+  try {
+    let user = await User.findById(_id);
+
+    if (!user) {
+      return res.status(400).json({ error: "No such user" });
+    }
+
+    const existingProductIndex = user.productCart.findIndex(
+      (item) => item.productId === req.body.productId
+    );
+
+    if (existingProductIndex !== -1) {
+      // If the product exists, update the amount
+      user.productCart[existingProductIndex].amount += 1;
+    } else {
+      // If the product doesn't exist, push it to the productCart array
+      user.productCart.push({ productId: req.body.productId, amount: 1 });
+    }
+
+    // Save the updated user
+    user = await user.save();
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// remove product from user's cart or favorites
+const removeFrom = async (req, res) => {
+  const { place } = req.params;
+  const id = req.user._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "No such user" });
   }
   let user;
-  if (mode === "cart") {
+  if (place === "cart") {
     user = await User.findOneAndUpdate(
       { _id: id },
-      { $push: { productCart: req.body } },
+      { $pull: { productCart: { productId: req.body.productId } } },
       { new: true }
     );
-  }else{
+  } else {
     user = await User.findOneAndUpdate(
       { _id: id },
-      { $push: { productFavorites: req.body } },
+      { $pull: { productFavorites: { productId: req.body } } },
       { new: true }
     );
   }
@@ -81,4 +115,4 @@ const updateUser = async (req, res) => {
   res.status(200).json(user);
 };
 
-module.exports = { loginUser, signupUser, updateUser };
+module.exports = { loginUser, signupUser, addToCart, removeFrom };
