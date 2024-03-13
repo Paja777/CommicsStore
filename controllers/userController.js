@@ -49,7 +49,7 @@ const signupUser = async (req, res) => {
   }
 };
 
-// add product to user's cart or favorites
+// add product to user's cart
 const addToCart = async (req, res) => {
   const id = req.user._id;
 
@@ -85,7 +85,7 @@ const addToCart = async (req, res) => {
   }
 };
 
-// remove product from user's cart or favorites
+// remove product from user's cart or
 const removeFrom = async (req, res) => {
   const { place } = req.params;
   const id = req.user._id;
@@ -103,7 +103,7 @@ const removeFrom = async (req, res) => {
   } else {
     user = await User.findOneAndUpdate(
       { _id: id },
-      { $pull: { productFavorites: { productId: req.body } } },
+      { $pull: { productFavorites: { productId: req.body.productId } } },
       { new: true }
     );
   }
@@ -115,4 +115,30 @@ const removeFrom = async (req, res) => {
   res.status(200).json(user);
 };
 
-module.exports = { loginUser, signupUser, addToCart, removeFrom };
+const addToFavorites = async (req, res) => {
+  const id = req.user._id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "No such user" });
+  }
+
+  const user = await User.findOneAndUpdate(
+    { _id: id },
+    { $push: { productFavorites: { productId: req.body.productId } } },
+    { new: true }
+  );
+
+  if (!user) {
+    return res.status(400).json({ error: "No such user" });
+  }
+
+  res.status(200).json(user);
+};
+
+module.exports = {
+  loginUser,
+  signupUser,
+  addToCart,
+  removeFrom,
+  addToFavorites,
+};
