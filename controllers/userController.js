@@ -51,18 +51,28 @@ const signupUser = async (req, res) => {
 
 // update user
 const updateUser = async (req, res) => {
+  const { mode } = req.params;
+  console.log(mode);
   const id = req.user._id;
   console.log(req.body);
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "No such user" });
   }
-
-  const user = await User.findOneAndUpdate(
-    { _id: id},
-    { $push: { productCart: req.body } },
-    { new: true }
-  );
+  let user;
+  if (mode === "cart") {
+    user = await User.findOneAndUpdate(
+      { _id: id },
+      { $push: { productCart: req.body } },
+      { new: true }
+    );
+  }else{
+    user = await User.findOneAndUpdate(
+      { _id: id },
+      { $push: { productFavorites: req.body } },
+      { new: true }
+    );
+  }
 
   if (!user) {
     return res.status(400).json({ error: "No such user" });

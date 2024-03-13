@@ -17,7 +17,7 @@ router.post('/signup', signupUser)
 router.use(requireAuth)
 
 // update route
-router.patch('/update', updateUser) 
+router.patch('/update/:inCart', updateUser) 
 
 
 
