@@ -52,12 +52,16 @@ const signupUser = async (req, res) => {
 // add product to user's cart
 const addToCart = async (req, res) => {
   const id = req.user._id;
+ 
+  console.log("req.body", req.body)
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "No such user" });
   }
   try {
-    let user = await User.findById(_id);
+    let user = await User.findById({_id : id});
+    const token = user.token;
+    console.log("user:", user);
 
     if (!user) {
       return res.status(400).json({ error: "No such user" });
@@ -66,6 +70,7 @@ const addToCart = async (req, res) => {
     const existingProductIndex = user.productCart.findIndex(
       (item) => item.productId === req.body.productId
     );
+    console.log("existing:",existingProductIndex)
 
     if (existingProductIndex !== -1) {
       // If the product exists, update the amount
@@ -76,9 +81,14 @@ const addToCart = async (req, res) => {
     }
 
     // Save the updated user
-    user = await user.save();
+    const updatedUser = await User.findOneAndUpdate(
+      {_id: id},
+      {...user},
+      {new: true}
+    )
+    console.log(updatedUser);
 
-    res.status(200).json({ user });
+    res.status(200).json(updatedUser);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });

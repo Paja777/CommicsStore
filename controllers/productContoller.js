@@ -4,9 +4,22 @@ const mongoose = require("mongoose");
 
 // get all products
 const getProducts = async (req, res) => {
-  const products = await Product.find({}).sort({ cratedAt: -1 });
+  // current page
+  const page = req.query.p || 0;
+  const productsPerPage = 2;
 
-  res.status(200).json(products);
+  let products = [];
+
+  try {
+    products = await Product.find()
+      .skip(page * productsPerPage)
+      .limit(productsPerPage);
+    
+    res.status(200).json(products);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ error: 'Could not fetch the documents' });
+  }
 };
 
 // get single product
