@@ -6,16 +6,22 @@ const mongoose = require("mongoose");
 const getProducts = async (req, res) => {
   // current page
   const page = req.query.p || 0;
-  const productsPerPage = 2;
+  
+  const productsPerPage = req.query.limit;
 
   let products = [];
 
   try {
+    const totalProducts = await Product.countDocuments();
+    let totalPages = 0;
+    if (totalProducts > productsPerPage) {
+       totalPages = Math.round(totalProducts / productsPerPage);
+    }
     products = await Product.find()
       .skip(page * productsPerPage)
       .limit(productsPerPage);
-    
-    res.status(200).json(products);
+    const results = {products, totalProducts, totalPages}; 
+    res.status(200).json(results);
   } catch (error) {
     console.error(error); // Log the error for debugging
     res.status(500).json({ error: 'Could not fetch the documents' });
