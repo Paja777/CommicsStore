@@ -27,8 +27,6 @@ app.use("/data", dataRoutes);
 mongoose 
   .connect(process.env.MONGO_URI, {
     dbName: 'CommicsStore',
-    useNewUrlParser: true,
-    useUnifiedTopology: true
   })
   .then(() => {
     //listen for requests

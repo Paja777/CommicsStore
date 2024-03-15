@@ -7,7 +7,8 @@ const {
   getCartProducts,
   getFavoriteProducts,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  updateProductStock
 } = require("../controllers/productContoller");
 
 
@@ -31,7 +32,10 @@ router.use(requireAuth)
 // post product
 router.post("/", createProduct);
 
-// update product
+// update product stock
+router.patch("/updateProductStock", updateProductStock);
+
+// update product 
 router.patch("/:id", updateProduct);
 
 // delete product

@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const getProducts = async (req, res) => {
   // current page
   const page = req.query.p || 0;
-  
+
   const productsPerPage = req.query.limit;
 
   let products = [];
@@ -15,16 +15,16 @@ const getProducts = async (req, res) => {
     const totalProducts = await Product.countDocuments();
     let totalPages = 0;
     if (totalProducts > productsPerPage) {
-       totalPages = Math.round(totalProducts / productsPerPage);
+      totalPages = Math.round(totalProducts / productsPerPage);
     }
     products = await Product.find()
       .skip(page * productsPerPage)
       .limit(productsPerPage);
-    const results = {products, totalProducts, totalPages}; 
+    const results = { products, totalProducts, totalPages };
     res.status(200).json(results);
   } catch (error) {
     console.error(error); // Log the error for debugging
-    res.status(500).json({ error: 'Could not fetch the documents' });
+    res.status(500).json({ error: "Could not fetch the documents" });
   }
 };
 
@@ -90,7 +90,7 @@ const createProduct = async (req, res) => {
       Y$: 0,
     });
 
-    res.status(200).json( dataResponse);
+    res.status(200).json(dataResponse);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -142,6 +142,40 @@ const deleteProduct = async (req, res) => {
   res.status(200).json(product);
 };
 
+// update product stock after selling product
+const updateProductStock = async (req, res) => {
+  const { products } = req.body;
+
+  const updatedProducts = products.map(async (p) => {
+    if (!mongoose.Types.ObjectId.isValid(p.id)) {
+      return res.status(400).json({ error: "No such product" });
+    }
+    let product = await User.findById({ _id: id });
+
+    if (product.stock >= p.amount) {
+      product.stock -= p.amount;
+      product = await Product.findOneAndUpdate(
+        { _id: p.id },
+        {
+          ...product,
+        }
+      );
+      await Data.findOneAndUpdate(
+        { productId: p.id },
+        {
+          ...product,
+        }
+      );
+    } else {
+      throw Error(
+        `There is no ${p.amount} ${product.title} on the Stock, please change amount there is only ${product.stock} ${product.title} `
+      );
+    }
+  });
+
+  res.status(200).json(updatedProducts);
+};
+
 module.exports = {
   getProducts,
   createProduct,
@@ -150,4 +184,5 @@ module.exports = {
   getFavoriteProducts,
   updateProduct,
   deleteProduct,
+  updateProductStock,
 };

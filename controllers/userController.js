@@ -53,8 +53,6 @@ const signupUser = async (req, res) => {
 const addToCart = async (req, res) => {
   const id = req.user._id;
 
-  console.log("req.body", req.body);
-
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "No such user" });
   }
@@ -105,8 +103,36 @@ const removeFrom = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "No such user" });
   }
-  let user;
-  if (place === "cart") {
+  let user = await User.findById({ _id: id });
+
+  if (place === "cart" && req.body.amount) {
+    if (!user) {
+      return res.status(400).json({ error: "No such user" });
+    }
+
+    const existingProductIndex = user.productCart.findIndex(
+      (item) => item.productId === req.body.productId
+    );
+
+    if (
+      existingProductIndex !== -1 &&
+      user.productCart[existingProductIndex].amount > 1
+    ) {
+      console.log("postoji product i amount je veci od 1:",user.productCart[existingProductIndex].amount )
+      // If the product exists, update the amount
+      user.productCart[existingProductIndex].amount -= req.body.amount;
+      await User.findOneAndUpdate({ _id: id }, { ...user }, { new: true });
+    } else {
+
+      console.log("postoji product i amount je 1:",user.productCart[existingProductIndex].amount )
+      
+      user = await User.findOneAndUpdate(
+        { _id: id },
+        { $pull: { productCart: { productId: req.body.productId } } },
+        { new: true }
+      );
+    }
+  } else if (place === cart) {
     user = await User.findOneAndUpdate(
       { _id: id },
       { $pull: { productCart: { productId: req.body.productId } } },
