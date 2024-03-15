@@ -15,6 +15,10 @@ const dataSchema = new Schema({
     type: String,
     required: true,
   },
+  stock: {
+    type: Number,
+    required: true
+  },
   soldMon: {
     type: Number,
     required: true,

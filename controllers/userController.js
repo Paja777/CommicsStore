@@ -132,7 +132,7 @@ const removeFrom = async (req, res) => {
         { new: true }
       );
     }
-  } else if (place === cart) {
+  } else if (place === "cart") {
     user = await User.findOneAndUpdate(
       { _id: id },
       { $pull: { productCart: { productId: req.body.productId } } },

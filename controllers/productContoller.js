@@ -1,4 +1,5 @@
 const Product = require("../models/productModel");
+const User = require("../models/userModel");
 const Data = require("../models/dataModel");
 const mongoose = require("mongoose");
 
@@ -145,35 +146,50 @@ const deleteProduct = async (req, res) => {
 // update product stock after selling product
 const updateProductStock = async (req, res) => {
   const { products } = req.body;
-
-  const updatedProducts = products.map(async (p) => {
-    if (!mongoose.Types.ObjectId.isValid(p.id)) {
-      return res.status(400).json({ error: "No such product" });
-    }
-    let product = await User.findById({ _id: id });
-
-    if (product.stock >= p.amount) {
-      product.stock -= p.amount;
-      product = await Product.findOneAndUpdate(
-        { _id: p.id },
-        {
-          ...product,
+  const userId = req.user._id;
+  let product;
+  try {
+    const updatedProducts = await Promise.all(
+      products.map(async (p) => {
+        if (!mongoose.Types.ObjectId.isValid(p._id)) {
+          return res.status(400).json({ error: "No such product" });
         }
-      );
-      await Data.findOneAndUpdate(
-        { productId: p.id },
-        {
-          ...product,
-        }
-      );
-    } else {
-      throw Error(
-        `There is no ${p.amount} ${product.title} on the Stock, please change amount there is only ${product.stock} ${product.title} `
-      );
-    }
-  });
+        product = await Product.findById({ _id: p._id });
+        console.log(product.stock);
 
-  res.status(200).json(updatedProducts);
+        if (product.stock >= p.amount) {
+          product.stock -= p.amount;
+          product = await Product.findOneAndUpdate(
+            { _id: p._id },
+            {
+              ...product,
+            },
+            { new: true }
+          );
+          await User.findOneAndUpdate(
+            { _id: userId },
+            { $set: { productCart: [] } }
+          );
+          await Data.findOneAndUpdate(
+            { productId: p._id },
+            {
+              $set: { stock: product.stock },
+            },
+            { new: true }
+          );
+          console.log(product.stock);
+        } else {
+          throw new Error(
+            `There is not enough stock for ${p.amount} ${product.title}. Only ${product.stock} available.`
+          );
+        }
+      })
+    );
+
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 module.exports = {
