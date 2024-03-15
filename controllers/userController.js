@@ -74,7 +74,12 @@ const addToCart = async (req, res) => {
       user.productCart[existingProductIndex].amount += req.body.amount;
     } else {
       // If the product doesn't exist, push it to the productCart array
-      user.productCart.push({ productId: req.body.productId, amount: req.body.amount, price: req.body.price });
+      user.productCart.push({
+        productId: req.body.productId,
+        amount: req.body.amount,
+        price: req.body.price,
+        title: req.body.title,
+      });
     }
 
     // Save the updated user
