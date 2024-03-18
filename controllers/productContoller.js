@@ -11,15 +11,20 @@ const getProducts = async (req, res) => {
   const productsPerPage = req.query.limit;
 
   const searchParam = req.query.searchTerm || "";
-  console.log(searchParam);
 
+  const categoryParam = req.query.category || "";
+  console.log(categoryParam);
   let products = [];
 
   try {
     let query = {};
-    if (searchParam) {
+    if (searchParam || categoryParam) {
       const searchRegex = new RegExp(searchParam, "i");
-      query = { title: { $regex: searchRegex } };
+      const categoryRegex = new RegExp(categoryParam, "i");
+      query = {
+        title: { $regex: searchRegex },
+        category: { $regex: categoryRegex },
+      };
     }
     const totalProducts = await Product.countDocuments(query);
 
