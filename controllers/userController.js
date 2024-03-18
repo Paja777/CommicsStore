@@ -118,14 +118,19 @@ const removeFrom = async (req, res) => {
       existingProductIndex !== -1 &&
       user.productCart[existingProductIndex].amount > 1
     ) {
-      console.log("postoji product i amount je veci od 1:",user.productCart[existingProductIndex].amount )
+      console.log(
+        "postoji product i amount je veci od 1:",
+        user.productCart[existingProductIndex].amount
+      );
       // If the product exists, update the amount
       user.productCart[existingProductIndex].amount -= req.body.amount;
       await User.findOneAndUpdate({ _id: id }, { ...user }, { new: true });
     } else {
+      console.log(
+        "postoji product i amount je 1:",
+        user.productCart[existingProductIndex].amount
+      );
 
-      console.log("postoji product i amount je 1:",user.productCart[existingProductIndex].amount )
-      
       user = await User.findOneAndUpdate(
         { _id: id },
         { $pull: { productCart: { productId: req.body.productId } } },
@@ -162,7 +167,15 @@ const addToFavorites = async (req, res) => {
 
   const user = await User.findOneAndUpdate(
     { _id: id },
-    { $push: { productFavorites: { productId: req.body.productId } } },
+    {
+      $push: {
+        productFavorites: {
+          productId: req.body.productId,
+          price: req.body.price,
+          title: req.body.title,
+        },
+      },
+    },
     { new: true }
   );
 
