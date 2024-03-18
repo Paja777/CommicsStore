@@ -10,15 +10,24 @@ const getProducts = async (req, res) => {
 
   const productsPerPage = req.query.limit;
 
+  const searchParam = req.query.searchTerm || "";
+  console.log(searchParam);
+
   let products = [];
 
   try {
-    const totalProducts = await Product.countDocuments();
+    let query = {};
+    if (searchParam) {
+      const searchRegex = new RegExp(searchParam, "i");
+      query = { title: { $regex: searchRegex } };
+    }
+    const totalProducts = await Product.countDocuments(query);
+
     let totalPages = 0;
     if (totalProducts > productsPerPage) {
       totalPages = Math.round(totalProducts / productsPerPage);
     }
-    products = await Product.find()
+    products = await Product.find(query)
       .skip(page * productsPerPage)
       .limit(productsPerPage);
     const results = { products, totalProducts, totalPages };
