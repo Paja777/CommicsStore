@@ -11,6 +11,7 @@ const getProducts = async (req, res) => {
   const productsPerPage = req.query.limit;
 
   const searchParam = req.query.searchTerm || "";
+  console.log(searchParam)
 
   const categoryParam = req.query.category || "";
   console.log(categoryParam);
@@ -19,10 +20,11 @@ const getProducts = async (req, res) => {
   try {
     let query = {};
     if (searchParam || categoryParam) {
-      const searchRegex = new RegExp(searchParam, "i");
+      
       const categoryRegex = new RegExp(categoryParam, "i");
+      
       query = {
-        title: { $regex: searchRegex },
+        title: { $regex: `^${searchParam}`, $options: "i"},
         category: { $regex: categoryRegex },
       };
     }
